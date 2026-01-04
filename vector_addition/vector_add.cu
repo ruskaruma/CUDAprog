@@ -19,6 +19,11 @@ int main() {
     float *h_b = (float*)malloc(size);
     float *h_c = (float*)malloc(size);
     
+    if (!h_a || !h_b || !h_c) {
+        printf("Failed to allocate host memory\n");
+        return 1;
+    }
+    
     // Initialize input vectors
     for (int i = 0; i < N; i++) {
         h_a[i] = i * 1.0f;
@@ -30,6 +35,12 @@ int main() {
     cudaMalloc(&d_a, size);
     cudaMalloc(&d_b, size);
     cudaMalloc(&d_c, size);
+    
+    if (!d_a || !d_b || !d_c) {
+        printf("Failed to allocate device memory\n");
+        free(h_a); free(h_b); free(h_c);
+        return 1;
+    }
     
     // Copy data from host to device
     cudaMemcpy(d_a, h_a, size, cudaMemcpyHostToDevice);
