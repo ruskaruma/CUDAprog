@@ -14,7 +14,9 @@ __global__ void vectorAdd(const float *a, const float *b, float *c, int n)
 
 int main()
 {
-    const int N = 1024;
+    int N;
+    printf("Enter vector size N: ");
+    scanf("%d", &N);
     const int size = N * sizeof(float);
 
     float *h_a = (float *)malloc(size);
@@ -27,10 +29,16 @@ int main()
         return 1;
     }
 
+    printf("Enter %d elements for vector A:\n", N);
     for (int i = 0; i < N; i++)
     {
-        h_a[i] = (float)i;
-        h_b[i] = (float)(2 * i);
+        scanf("%f", &h_a[i]);
+    }
+
+    printf("Enter %d elements for vector B:\n", N);
+    for (int i = 0; i < N; i++)
+    {
+        scanf("%f", &h_b[i]);
     }
 
     float *d_a = nullptr;
@@ -58,25 +66,12 @@ int main()
 
     cudaMemcpy(h_c, d_c, size, cudaMemcpyDeviceToHost);
 
-    bool success = true;
+    printf("Result vector C (A + B):\n");
     for (int i = 0; i < N; i++)
     {
-        if (h_c[i] != h_a[i] + h_b[i])
-        {
-            printf("Error at index %d: %f != %f\n", i, h_c[i], h_a[i] + h_b[i]);
-            success = false;
-            break;
-        }
+        printf("%.2f ", h_c[i]);
     }
-
-    if (success)
-    {
-        printf("Vector addition successful! First 5 results:\n");
-        for (int i = 0; i < 5; i++)
-        {
-            printf("%f + %f = %f\n", h_a[i], h_b[i], h_c[i]);
-        }
-    }
+    printf("\n");
 
     cudaFree(d_a);
     cudaFree(d_b);
